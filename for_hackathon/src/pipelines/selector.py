@@ -1,4 +1,3 @@
-from src.pipelines.improve_algorithm import BaselineAlg
 from src.pipelines.submission import MyAlg
 
 
@@ -12,8 +11,7 @@ async def Alg(
     llm_client,
     seed: int = 42
 ) -> tuple[str, dict]:
-    # Switch algorithms here: replace BaselineAlg with MyAlg or any other algorithm
-    return await BaselineAlg(
+    return await MyAlg(
         dataset_id=dataset_id,
         num_examples=num_examples,
         split=split,
