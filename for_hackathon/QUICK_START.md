@@ -6,8 +6,7 @@
 После установки зависимостей можно запустить пайплайн вообще без аргументов:
 
 ```bash
-cd for_hackathon
-uv run python -m src.pipelines.meta_eval
+python -m src.pipelines.meta_eval
 ```
 
 Если хотите переопределить только часть параметров, передайте нужные флаги (например, `--dataset-id`, `--num-examples`).
