@@ -1,0 +1,17 @@
+{
+  "mtbench101": {
+    "id": "mtbench101",
+    "path": "data/converted/mtbench101.json",
+    "description": "MT-Bench-101 converted (train=1248, val=69, test=70)"
+  },
+  "empathetic_dialogues": {
+    "id": "empathetic_dialogues",
+    "path": "data/converted/empathetic_dialogues.json",
+    "description": "EmpatheticDialogues converted + cleaned (train=1486, val=498, test=98)"
+  },
+  "multiwoz_2_1": {
+    "id": "multiwoz_2_1",
+    "path": "data/converted/multiwoz_2.1.json",
+    "description": "MultiWOZ 2.1 converted + cleaned (train=1476, val=500, test=100)"
+  }
+}

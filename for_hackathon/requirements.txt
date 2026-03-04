@@ -1,0 +1,9 @@
+langchain==0.3.27
+langchain-openai==0.3.29
+langchain-core==0.3.79
+openai==1.97.2
+tiktoken==0.9.0
+pydantic==2.12.0
+fastapi==0.115.0
+uvicorn==0.32.0
+httpx==0.27.0
