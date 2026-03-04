@@ -127,35 +127,39 @@ def build_usage_report(run_path: Path) -> dict:
 def calculate_dataset_tokens(dialogues: List[dict]) -> int:
     """
     Calculate total tokens in dataset dialogues using tiktoken.
-    
-    Args:
-        dialogues: List of dialogue dicts with 'golden_history' and 'golden_answer'
-    
-    Returns:
-        Total number of tokens in the dataset
+
+    In restricted environments, loading tokenizer files may require network.
+    If tokenizer loading fails, uses a deterministic char-based approximation
+    (1 token ~= 4 chars) to keep pipeline runnable.
     """
-    try:
-        # Use cl100k_base encoding (used by GPT-4, GPT-3.5)
-        encoding = tiktoken.get_encoding("cl100k_base")
-    except Exception:
-        # Fallback to default encoding
-        encoding = tiktoken.get_encoding("gpt2")
-    
+    encoding = None
+    for encoding_name in ("cl100k_base", "gpt2"):
+        try:
+            encoding = tiktoken.get_encoding(encoding_name)
+            break
+        except Exception as e:
+            logger.warning(f"Failed to load tiktoken encoding '{encoding_name}': {e}")
+
     total_tokens = 0
-    
+
     for dialogue in dialogues:
-        # Count tokens in golden_history (all turns)
         golden_history = dialogue.get("golden_history", [])
         for turn in golden_history:
             content = turn.get("content", "")
-            if content:
+            if not content:
+                continue
+            if encoding is not None:
                 total_tokens += len(encoding.encode(content))
-        
-        # Count tokens in golden_answer
+            else:
+                total_tokens += max(1, len(content) // 4)
+
         golden_answer = dialogue.get("golden_answer", "")
         if golden_answer:
-            total_tokens += len(encoding.encode(golden_answer))
-    
+            if encoding is not None:
+                total_tokens += len(encoding.encode(golden_answer))
+            else:
+                total_tokens += max(1, len(golden_answer) // 4)
+
     return total_tokens
 
 

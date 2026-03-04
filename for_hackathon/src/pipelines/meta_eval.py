@@ -24,6 +24,16 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+DEFAULT_EVAL_API_URL = "https://hackathon.intellemma.ru"
+DEFAULT_EVAL_API_KEY = "NOW6UvFTtf-XM545PO4baX19vRd2T9jN267widVeRGA"
+DEFAULT_LLM_API_URL = "https://provider.intellemma.ru/v1"
+DEFAULT_LLM_API_KEY = "0726dd7e0fff495120de20e640be4cd341bb7720fdb9d77101e88975e2870e82"
+DEFAULT_MODEL_NAME = "openai/gpt-oss-20b"
+DEFAULT_DATASET_ID = "mtbench101"
+DEFAULT_JUDGE_ID = "golden_semantic_match_v1"
+DEFAULT_AGENT_PROMPT = "Ты универсальный AI-ассистент. Отвечай точно, структурированно и по делу. Не выдумывай факты; при нехватке данных задай уточняющий вопрос."
+
+
 async def metaeval(
     Alg,
     dataset_id: str,
@@ -350,30 +360,30 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Meta-Evaluation Pipeline: metaeval(Alg, D, E, M)")
     
     # Основные параметры
-    parser.add_argument("--eval-api-url", required=True, help="Base URL of the evaluation API (e.g., http://localhost:8000)")
-    parser.add_argument("--eval-api-key", help="Eval API key (for Authorization: Bearer ...)")
-    parser.add_argument("--dataset-id", required=True, help="Dataset ID from datasets_registry.json")
-    parser.add_argument("--num-examples", type=int, required=True, help="Number of examples to process")
-    parser.add_argument("--split", required=True, choices=["train", "val", "test"], help="Dataset split")
+    parser.add_argument("--eval-api-url", default=DEFAULT_EVAL_API_URL, help="Base URL of the evaluation API")
+    parser.add_argument("--eval-api-key", default=DEFAULT_EVAL_API_KEY, help="Eval API key (for Authorization: Bearer ...)")
+    parser.add_argument("--dataset-id", default=DEFAULT_DATASET_ID, help="Dataset ID from datasets_registry.json")
+    parser.add_argument("--num-examples", type=int, default=10, help="Number of examples to process")
+    parser.add_argument("--split", default="val", choices=["train", "val", "test"], help="Dataset split")
     parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
-    parser.add_argument("--judge-id", required=True, help="Judge prompt ID from judges.json")
-    parser.add_argument("--agent-prompt", required=True, help="Initial agent prompt text")
+    parser.add_argument("--judge-id", default=DEFAULT_JUDGE_ID, help="Judge prompt ID from judges.json")
+    parser.add_argument("--agent-prompt", default=DEFAULT_AGENT_PROMPT, help="Initial agent prompt text")
     
     # Модель (для генерации ответов)
     model_group = parser.add_argument_group("Model (for answer generation)")
-    model_group.add_argument("--model-name", required=True, help="Model name")
+    model_group.add_argument("--model-name", default=DEFAULT_MODEL_NAME, help="Model name")
     model_group.add_argument("--model-temperature", type=float, default=0.7, help="Model temperature")
     model_group.add_argument("--model-max-tokens", type=int, default=1000, help="Model max tokens")
-    model_group.add_argument("--model-base-url", help="Model base URL (for OpenAI-compatible API)")
-    model_group.add_argument("--model-api-key", help="Model API key (optional)")
+    model_group.add_argument("--model-base-url", default=DEFAULT_LLM_API_URL, help="Model base URL (for OpenAI-compatible API)")
+    model_group.add_argument("--model-api-key", default=DEFAULT_LLM_API_KEY, help="Model API key")
     
     # Judge (для оценки)
     judge_group = parser.add_argument_group("Judge (for evaluation)")
-    judge_group.add_argument("--judge-name", required=True, help="Judge model name")
+    judge_group.add_argument("--judge-name", default=DEFAULT_MODEL_NAME, help="Judge model name")
     judge_group.add_argument("--judge-temperature", type=float, default=0.0, help="Judge temperature")
     judge_group.add_argument("--judge-max-tokens", type=int, default=1500, help="Judge max tokens")
-    judge_group.add_argument("--judge-base-url", help="Judge base URL (for OpenAI-compatible API)")
-    judge_group.add_argument("--judge-api-key", help="Judge API key (optional)")
+    judge_group.add_argument("--judge-base-url", default=DEFAULT_LLM_API_URL, help="Judge base URL (for OpenAI-compatible API)")
+    judge_group.add_argument("--judge-api-key", default=DEFAULT_LLM_API_KEY, help="Judge API key")
     
     args = parser.parse_args()
     
